@@ -1,0 +1,17 @@
+#about {
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlR5fFnBt-P0tG8FrppK7NilVE7mlOq1ZFKg&s");
+  background-size: cover; /* Mengisi seluruh area dengan gambar */
+  background-position: center; /* Posisi gambar di tengah-tengah */
+  padding: 100px 0; /* Padding untuk memberikan ruang di sekitar teks */
+  color: rgb(0, 0, 0); /* Warna teks di atas gambar */
+}
+
+.container {
+  position: relative;
+  z-index: 1; /* Pastikan teks berada di atas gambar */
+}
+
+.container h2,
+.container p {
+  position: relative;
+}
