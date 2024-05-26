@@ -11,8 +11,8 @@ section {
   padding-top: 5rem;
 }
 
-/* My Keyboard Section */
-.keyboard-box {
+/* My device Section */
+.device-box {
   position: relative;
   background-color: #0c6efd;
   border-radius: 10px;
@@ -20,7 +20,7 @@ section {
   transform-style: preserve-3d;
 }
 
-.keyboard-box::before {
+.device-box::before {
   content: "MY";
   position: absolute;
   color: #fff;
@@ -34,11 +34,11 @@ section {
   transition: 0.5s;
 }
 
-.keyboard-box:hover::before {
+.device-box:hover::before {
   opacity: 0.2;
 }
 
-.keyboard-box::after {
+.device-box::after {
   content: "DEVICE";
   position: absolute;
   color: #fff;
@@ -52,11 +52,11 @@ section {
   transition: 0.5s;
 }
 
-.keyboard-box:hover::after {
+.device-box:hover::after {
   opacity: 0.2;
 }
 
-.keyboard-name {
+.device-name {
   position: absolute;
   top: 0;
   width: 100%;
@@ -68,12 +68,12 @@ section {
   transition: 0.5s;
 }
 
-.keyboard-box:hover .keyboard-name {
+.device-box:hover .device-name {
   top: 20px;
   opacity: 1;
 }
 
-.keyboard-detail-button {
+.device-detail-button {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -83,12 +83,12 @@ section {
   z-index: 3;
 }
 
-.keyboard-box:hover .keyboard-detail-button {
+.device-box:hover .device-detail-button {
   opacity: 1;
   bottom: 20px;
 }
 
-.keyboard-img {
+.device-img {
   position: absolute;
   top: 52%;
   left: 50%;
@@ -98,6 +98,6 @@ section {
   z-index: 2;
 }
 
-.keyboard-box:hover .keyboard-img {
+.device-box:hover .device-img {
   transform: translate3d(-50%, -52%, 100px) rotate(5deg) scale(1.2);
 }
