@@ -1,47 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Crypto Converter</title>
+        <title>Crypto Calculator Pro</title>
         <link
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
             rel="stylesheet"
         />
         <style>
+            :root {
+                --primary-color: #4a90e2;
+                --secondary-color: #7ed6df;
+                --bg-color: #f5f6fa;
+                --text-color: #2f3542;
+            }
+
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
+
             body {
                 font-family: 'Poppins', sans-serif;
                 background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-                min-height: 100vh;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                color: #333;
+                min-height: 100vh;
+                color: var(--text-color);
+                padding: 20px;
             }
-            .container {
+
+            .calculator-container {
                 background: white;
-                border-radius: 20px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                border-radius: 15px;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
                 width: 100%;
                 max-width: 450px;
                 padding: 30px;
                 transition: all 0.3s ease;
             }
-            .container:hover {
+
+            .calculator-container:hover {
                 transform: scale(1.02);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             }
-            h2 {
-                text-align: center;
-                color: #2575fc;
+
+            /* Tab Styles */
+            .tabs {
+                display: flex;
                 margin-bottom: 20px;
+                border-bottom: 2px solid #e0e0e0;
+            }
+
+            .tab-button {
+                padding: 10px 20px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-family: 'Poppins', sans-serif;
+                font-size: 16px;
+                color: #888;
+                position: relative;
+                transition: all 0.3s ease;
+            }
+
+            .tab-button.active {
+                color: var(--primary-color);
+            }
+
+            .tab-button.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: var(--primary-color);
+            }
+
+            .tab-content {
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            /* Existing styles from both applications */
+            .title {
+                text-align: center;
+                color: var(--primary-color);
+                margin-bottom: 25px;
+                font-size: 24px;
                 font-weight: 600;
             }
+
+            .input-group {
+                margin-bottom: 20px;
+                position: relative;
+            }
+
+            .input-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--text-color);
+            }
+
+            .input-group input {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+
+            .input-group input:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            }
+
+            .currency-switch {
+                position: absolute;
+                right: 10px;
+                top: 40px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 40px;
+                height: 20px;
+            }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: 0.4s;
+                border-radius: 20px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: '';
+                height: 16px;
+                width: 16px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                transition: 0.4s;
+                border-radius: 50%;
+            }
+
+            input:checked + .slider {
+                background-color: var(--primary-color);
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
+
+            .results {
+                background: var(--bg-color);
+                border-radius: 10px;
+                padding: 20px;
+                text-align: center;
+            }
+
+            .results h3 {
+                margin-bottom: 15px;
+                color: var(--primary-color);
+            }
+
+            .result-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                padding: 10px;
+                background: white;
+                border-radius: 6px;
+            }
+
+            .result-item span:last-child {
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            #solanaPrice,
+            #lastUpdated {
+                font-size: 12px;
+                color: #888;
+                text-align: center;
+                margin-top: 10px;
+                background-color: #f8f9fa;
+                padding: 8px;
+                border-radius: 10px;
+            }
+
             .crypto-selector {
                 width: 100%;
                 padding: 10px;
@@ -51,46 +224,7 @@
                 background-color: #f8f9fa;
                 font-size: 16px;
             }
-            #lastUpdated {
-                text-align: center;
-                font-size: 0.8em;
-                color: #6c757d;
-                margin-bottom: 15px;
-                background-color: #f8f9fa;
-                padding: 8px;
-                border-radius: 10px;
-            }
-            .input-group {
-                margin-bottom: 15px;
-                position: relative;
-            }
-            label {
-                display: block;
-                margin-bottom: 5px;
-                color: #2575fc;
-                font-weight: 600;
-            }
-            input {
-                width: 100%;
-                padding: 12px 15px;
-                border: 2px solid #e9ecef;
-                border-radius: 10px;
-                font-size: 16px;
-                transition: all 0.3s ease;
-                background-color: #f8f9fa;
-            }
-            input:focus {
-                outline: none;
-                border-color: #2575fc;
-                box-shadow: 0 0 0 0.2rem rgba(37, 117, 252, 0.25);
-            }
-            .currency-icon {
-                position: absolute;
-                right: 15px;
-                top: 45px;
-                color: #6c757d;
-                font-weight: bold;
-            }
+
             .update-btn {
                 width: 100%;
                 padding: 12px;
@@ -103,82 +237,199 @@
                 font-weight: 600;
                 margin-top: 15px;
             }
+
             .update-btn:hover {
                 background-color: #1a5adb;
                 transform: translateY(-2px);
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
-            .update-btn:active {
-                transform: translateY(0);
-                box-shadow: none;
-            }
-            .update-btn.loading {
-                background-color: #6c757d;
-                cursor: not-allowed;
-            }
 
-            .link-button {
-                display: inline-block;
-                padding: 8px 12px; /* Mengurangi padding untuk ukuran lebih kecil */
-                background-color: #2575fc;
-                color: white;
-                text-align: center;
-                border-radius: 5px; /* Mengurangi radius untuk tampilan lebih kecil */
-                text-decoration: none;
-                margin-top: 10px; /* Mengurangi margin atas */
-                transition: background-color 0.3s ease;
-                font-size: 14px; /* Ukuran font lebih kecil */
-            }
-
-            .link-button:hover {
-                background-color: #1a5adb;
+            .currency-icon {
+                position: absolute;
+                right: 15px;
+                top: 45px;
+                color: #6c757d;
+                font-weight: bold;
             }
 
             @media (max-width: 480px) {
-                .container {
-                    width: 95%;
-                    margin: 10px;
-                    padding: 20px;
+                .calculator-container {
+                    padding: 15px;
+                }
+                .currency-switch {
+                    top: 35px;
                 }
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <h2>🚀 Crypto Converter</h2>
-
-            <select id="cryptoSelector" class="crypto-selector">
-                <option value="solana">Solana (SOL)</option>
-                <option value="ethereum">Ethereum (ETH)</option>
-            </select>
-
-            <p id="lastUpdated">Loading price...</p>
-
-            <div class="input-group">
-                <label id="cryptoLabel" for="crypto">SOL</label>
-                <input type="text" id="crypto" placeholder="Enter SOL amount" />
-                <span id="cryptoIcon" class="currency-icon">SOL</span>
+        <div class="calculator-container">
+            <div class="tabs">
+                <button
+                    class="tab-button active"
+                    onclick="openTab('calculator')"
+                >
+                    🧮 Calculator
+                </button>
+                <button class="tab-button" onclick="openTab('converter')">
+                    💱 Converter
+                </button>
             </div>
 
-            <div class="input-group">
-                <label for="usd">USD</label>
-                <input type="text" id="usd" placeholder="Enter USD amount" />
-                <span class="currency-icon">$</span>
+            <!-- Calculator Tab -->
+            <div id="calculator" class="tab-content active">
+                <div class="title">Calculator Fee & Profit</div>
+
+                <div class="input-group">
+                    <label>💸Modal</label>
+                    <input
+                        type="number"
+                        id="modalAmount"
+                        placeholder="Masukkan jumlah modal"
+                    />
+                    <div class="currency-switch">
+                        <label>USD</label>
+                        <label class="switch">
+                            <input type="checkbox" id="modalSwitch" />
+                            <span class="slider"></span>
+                        </label>
+                        <label>SOL</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>🍺Fee</label>
+                    <input
+                        type="number"
+                        id="feeAmount"
+                        placeholder="Masukkan jumlah biaya"
+                    />
+                    <div class="currency-switch">
+                        <label>USD</label>
+                        <label class="switch">
+                            <input type="checkbox" id="currencySwitch" />
+                            <span class="slider"></span>
+                        </label>
+                        <label>SOL</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>🎯Profit</label>
+                    <input
+                        type="number"
+                        id="targetProfit"
+                        placeholder="Masukkan target keuntungan"
+                    />
+                    <div class="currency-switch">
+                        <label>USD</label>
+                        <label class="switch">
+                            <input type="checkbox" id="profitSwitch" />
+                            <span class="slider"></span>
+                        </label>
+                        <label>%</label>
+                    </div>
+                </div>
+
+                <div id="solanaPrice">Harga Solana: Memuat...</div>
+
+                <div class="results">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-item">
+                        <span>Persentase Biaya</span>
+                        <span id="feePercentage">0.00%</span>
+                    </div>
+                    <div class="result-item">
+                        <span id="profitLabel">Keuntungan</span>
+                        <span id="profitValue">0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Total Persentase</span>
+                        <span id="totalPercentage">0.00%</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label for="idr">IDR</label>
-                <input type="text" id="idr" placeholder="Enter IDR amount" />
-                <span class="currency-icon">Rp</span>
-            </div>
+            <!-- Converter Tab -->
+            <div id="converter" class="tab-content">
+                <div class="title">🚀 Crypto Converter</div>
 
-            <button id="updatePriceBtn" class="update-btn">
-                🔄 Update Harga Sekarang
-            </button>
-            <a href="Fee.html" class="link-button">🍗 FEE</a>
+                <select id="cryptoSelector" class="crypto-selector">
+                    <option value="solana">Solana (SOL)</option>
+                    <option value="ethereum">Ethereum (ETH)</option>
+                </select>
+
+                <p id="lastUpdated">Loading price...</p>
+
+                <div class="input-group">
+                    <label id="cryptoLabel" for="crypto">SOL</label>
+                    <input
+                        type="text"
+                        id="crypto"
+                        placeholder="Enter SOL amount"
+                    />
+                    <span id="cryptoIcon" class="currency-icon">SOL</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="usd">USD</label>
+                    <input
+                        type="text"
+                        id="usd"
+                        placeholder="Enter USD amount"
+                    />
+                    <span class="currency-icon">$</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="idr">IDR</label>
+                    <input
+                        type="text"
+                        id="idr"
+                        placeholder="Enter IDR amount"
+                    />
+                    <span class="currency-icon">Rp</span>
+                </div>
+
+                <button id="updatePriceBtn" class="update-btn">
+                    🔄 Update Harga Sekarang
+                </button>
+            </div>
         </div>
 
         <script>
+            // Tab functionality
+            function openTab(tabName) {
+                const tabs = document.getElementsByClassName('tab-content');
+                const buttons = document.getElementsByClassName('tab-button');
+
+                for (let tab of tabs) {
+                    tab.classList.remove('active');
+                }
+                for (let button of buttons) {
+                    button.classList.remove('active');
+                }
+
+                document.getElementById(tabName).classList.add('active');
+                event.currentTarget.classList.add('active');
+            }
+
+            // Calculator functionality
+            let solanaPrice = 0;
+            const modalAmountInput = document.getElementById('modalAmount');
+            const modalSwitch = document.getElementById('modalSwitch');
+            const feeAmountInput = document.getElementById('feeAmount');
+            const targetProfitInput = document.getElementById('targetProfit');
+            const currencySwitch = document.getElementById('currencySwitch');
+            const profitSwitch = document.getElementById('profitSwitch');
+            const solanaPriceElement = document.getElementById('solanaPrice');
+            const feePercentageSpan = document.getElementById('feePercentage');
+            const profitValueSpan = document.getElementById('profitValue');
+            const totalPercentageSpan =
+                document.getElementById('totalPercentage');
+            const profitLabel = document.getElementById('profitLabel');
+
+            // Converter functionality
             let SOL_TO_USD = 0;
             let SOL_TO_IDR = 0;
             let ETH_TO_USD = 0;
@@ -194,7 +445,8 @@
             const updatePriceBtn = document.getElementById('updatePriceBtn');
             const lastUpdatedElement = document.getElementById('lastUpdated');
 
-            async function fetchCryptoPrices() {
+            // Fetch prices for both calculator and converter
+            const fetchPrices = async () => {
                 try {
                     updatePriceBtn.classList.add('loading');
                     updatePriceBtn.disabled = true;
@@ -205,29 +457,94 @@
                     );
                     const data = await response.json();
 
+                    // Update prices for converter
                     SOL_TO_USD = data.solana.usd;
                     SOL_TO_IDR = data.solana.idr;
                     ETH_TO_USD = data.ethereum.usd;
                     ETH_TO_IDR = data.ethereum.idr;
 
+                    // Update price for calculator
+                    solanaPrice = data.solana.usd;
+
+                    // Update UI elements
+                    solanaPriceElement.textContent = `Harga Solana: $${solanaPrice.toFixed(
+                        2
+                    )}`;
                     updateLastUpdatedText();
 
+                    // Recalculate values
+                    calculateResults();
                     if (cryptoInput.value) convertFromCrypto();
 
                     updatePriceBtn.classList.remove('loading');
                     updatePriceBtn.disabled = false;
                     updatePriceBtn.textContent = '🔄 Update Harga Sekarang';
                 } catch (error) {
-                    console.error('Failed to fetch crypto prices:', error);
+                    console.error('Failed to fetch prices:', error);
+                    solanaPriceElement.textContent =
+                        'Harga Solana: Gagal memuat harga';
                     lastUpdatedElement.textContent =
                         'Gagal update harga. Periksa koneksi internet.';
 
                     updatePriceBtn.classList.remove('loading');
                     updatePriceBtn.disabled = false;
                     updatePriceBtn.textContent = '🔄 Coba Lagi';
-                }
-            }
 
+                    setTimeout(fetchPrices, 5000);
+                }
+            };
+
+            // Calculator functions
+            const calculateResults = () => {
+                const modalAmount = parseFloat(modalAmountInput.value) || 0;
+                const feeAmount = parseFloat(feeAmountInput.value) || 0;
+                const targetProfit = parseFloat(targetProfitInput.value) || 0;
+
+                if (solanaPrice === 0) {
+                    console.warn('Harga Solana belum tersedia');
+                    return;
+                }
+
+                let effectiveModalAmount = modalSwitch.checked
+                    ? modalAmount * solanaPrice
+                    : modalAmount;
+
+                let effectiveFeeAmount = currencySwitch.checked
+                    ? feeAmount * solanaPrice
+                    : feeAmount;
+
+                const feePercentage =
+                    effectiveModalAmount > 0
+                        ? (effectiveFeeAmount / effectiveModalAmount) * 100
+                        : 0;
+
+                let profitValue, profitPercentage;
+                if (profitSwitch.checked) {
+                    profitPercentage = targetProfit;
+                    profitValue = (effectiveModalAmount * targetProfit) / 100;
+                } else {
+                    profitValue = targetProfit;
+                    profitPercentage =
+                        effectiveModalAmount > 0
+                            ? (targetProfit / effectiveModalAmount) * 100
+                            : 0;
+                }
+
+                const totalPercentage = feePercentage + profitPercentage;
+
+                feePercentageSpan.textContent = `${feePercentage.toFixed(2)}%`;
+                profitValueSpan.textContent = profitSwitch.checked
+                    ? `${profitValue.toFixed(2)} USD`
+                    : `${profitPercentage.toFixed(2)}%`;
+                totalPercentageSpan.textContent = `${totalPercentage.toFixed(
+                    2
+                )}%`;
+                profitLabel.textContent = profitSwitch.checked
+                    ? 'Keuntungan (USD)'
+                    : 'Keuntungan (%)';
+            };
+
+            // Converter functions
             function updateLastUpdatedText() {
                 if (currentCrypto === 'solana') {
                     lastUpdatedElement.textContent = `Last Updated: ${new Date().toLocaleString()} | 1 SOL = $${SOL_TO_USD} | 1 SOL = Rp${SOL_TO_IDR.toLocaleString()}`;
@@ -296,6 +613,7 @@
                 }
             }
 
+            // Event Listeners
             cryptoSelector.addEventListener('change', (event) => {
                 currentCrypto = event.target.value;
                 cryptoLabel.textContent =
@@ -305,15 +623,43 @@
                 cryptoInput.placeholder = `Enter ${
                     currentCrypto === 'solana' ? 'SOL' : 'ETH'
                 } amount`;
-                fetchCryptoPrices(); // Fetch prices when switching currencies
+                updateLastUpdatedText();
+            });
+
+            [modalAmountInput, feeAmountInput, targetProfitInput].forEach(
+                (input) => {
+                    input.addEventListener('input', calculateResults);
+                }
+            );
+
+            modalSwitch.addEventListener('change', () => {
+                modalAmountInput.placeholder = modalSwitch.checked
+                    ? 'Masukkan modal dalam SOL'
+                    : 'Masukkan modal dalam USD';
+                calculateResults();
+            });
+
+            currencySwitch.addEventListener('change', () => {
+                feeAmountInput.placeholder = currencySwitch.checked
+                    ? 'Masukkan biaya dalam SOL'
+                    : 'Masukkan biaya dalam USD';
+                calculateResults();
+            });
+
+            profitSwitch.addEventListener('change', () => {
+                targetProfitInput.placeholder = profitSwitch.checked
+                    ? 'Masukkan keuntungan dalam %'
+                    : 'Masukkan keuntungan dalam USD';
+                calculateResults();
             });
 
             cryptoInput.addEventListener('input', convertFromCrypto);
             usdInput.addEventListener('input', convertFromUSD);
             idrInput.addEventListener('input', convertFromIDR);
-            updatePriceBtn.addEventListener('click', fetchCryptoPrices);
+            updatePriceBtn.addEventListener('click', fetchPrices);
 
-            fetchCryptoPrices(); // Fetch initial prices on page load
+            // Initial fetch
+            fetchPrices();
         </script>
     </body>
 </html>
