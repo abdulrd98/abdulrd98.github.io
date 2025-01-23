@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Solana Fee Calculator</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
             rel="stylesheet"
@@ -19,47 +20,32 @@
             </h1>
 
             <div class="space-y-4">
-                <div class="flex items-center space-x-4 mb-4">
-                    <label class="flex items-center">
-                        <input
-                            type="radio"
-                            name="balanceType"
-                            value="usd"
-                            class="mr-2"
-                            checked
-                        />
-                        USD
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            type="radio"
-                            name="balanceType"
-                            value="sol"
-                            class="mr-2"
-                        />
-                        SOL
-                    </label>
-                </div>
-
-                <div class="flex items-center space-x-2">
-                    <input
-                        type="number"
-                        id="balanceInput"
-                        placeholder="Enter balance"
-                        class="flex-grow bg-gray-700 border border-gray-600 rounded-md p-2 text-white"
-                    />
-                    <button
-                        id="refreshPriceBtn"
-                        class="bg-blue-600 hover:bg-blue-700 p-2 rounded-md"
+                <!-- Wallet Balance Container -->
+                <div
+                    id="walletBalanceContainer"
+                    class="bg-gray-700 p-3 rounded-md text-center mb-4"
+                >
+                    <span class="block text-sm text-gray-400 mb-1"
+                        >Wallet 1 Balance</span
                     >
-                        🔄
-                    </button>
+                    <span
+                        id="walletBalanceDisplay"
+                        class="text-2xl font-bold text-green-400"
+                        >Loading...</span
+                    >
+                    <span
+                        id="walletBalanceUSD"
+                        class="block text-sm text-gray-400 mt-1"
+                        >Loading...</span
+                    >
                 </div>
 
+                <!-- Price Info -->
                 <div id="priceInfo" class="text-sm text-gray-400 text-center">
                     1 SOL = $<span id="solPrice">-</span>
                 </div>
 
+                <!-- Fee Level Buttons -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2"
                         >Fee Level (SOL)</label
@@ -91,6 +77,7 @@
                         </button>
                     </div>
 
+                    <!-- x2 Fee Checkbox -->
                     <div class="flex items-center justify-center mt-2">
                         <label class="flex items-center">
                             <input
@@ -103,21 +90,29 @@
                     </div>
                 </div>
 
-                <button
-                    id="calculateBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-md font-semibold mt-4"
-                >
-                    Calculate Remaining Balance
-                </button>
-
+                <!-- Result Display -->
                 <div id="result" class="mt-4 text-center hidden">
-                    <p class="text-lg">
-                        Remaining Balance:
+                    <p class="text-lg">Remaining Balance:</p>
+                    <p>
                         <span
                             id="remainingBalance"
                             class="font-bold text-green-400"
                         ></span>
                         SOL
+                    </p>
+                    <p>
+                        <span
+                            id="remainingBalanceUSD"
+                            class="font-bold text-green-400"
+                        ></span>
+                        USD
+                    </p>
+                    <p>
+                        <span
+                            id="remainingBalanceIDR"
+                            class="font-bold text-green-400"
+                        ></span>
+                        IDR
                     </p>
                 </div>
             </div>
@@ -125,24 +120,37 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                const balanceTypeRadios = document.querySelectorAll(
-                    'input[name="balanceType"]'
+                const RPC_ENDPOINTS = [
+                    'https://api.mainnet-beta.solana.com',
+                    'https://solana-mainnet.phantom.app',
+                    'https://rpc.ankr.com/solana',
+                    'https://solana-rpc.publicnode.com',
+                ];
+
+                const WALLET_ADDRESS =
+                    '3MWedknEBbLNzv8ZcpPf5FJKE7AhAvGhwW8RuEZy11i7';
+                const walletBalanceDisplay = document.getElementById(
+                    'walletBalanceDisplay'
                 );
-                const balanceInput = document.getElementById('balanceInput');
-                const refreshPriceBtn =
-                    document.getElementById('refreshPriceBtn');
+                const walletBalanceUSD =
+                    document.getElementById('walletBalanceUSD');
                 const solPriceSpan = document.getElementById('solPrice');
                 const feeButtons = document.querySelectorAll('.fee-btn');
                 const feeMultiplierCheckbox = document.getElementById(
                     'feeMultiplierCheckbox'
                 );
-                const calculateBtn = document.getElementById('calculateBtn');
                 const resultDiv = document.getElementById('result');
                 const remainingBalanceSpan =
                     document.getElementById('remainingBalance');
+                const remainingBalanceUSD = document.getElementById(
+                    'remainingBalanceUSD'
+                );
+                const remainingBalanceIDR = document.getElementById(
+                    'remainingBalanceIDR'
+                );
 
                 let solPrice = 0;
-                let selectedFee = 0;
+                let currentBalance = 0;
 
                 // Fetch SOL Price
                 async function fetchSolPrice() {
@@ -159,44 +167,115 @@
                     }
                 }
 
-                // Initial price fetch
-                fetchSolPrice();
+                // Fetch Wallet Balance
+                async function fetchWalletBalance() {
+                    for (let endpoint of RPC_ENDPOINTS) {
+                        try {
+                            const connection = new solanaWeb3.Connection(
+                                endpoint,
+                                'confirmed'
+                            );
+                            const publicKey = new solanaWeb3.PublicKey(
+                                WALLET_ADDRESS
+                            );
+                            const balance = await connection.getBalance(
+                                publicKey
+                            );
+                            currentBalance =
+                                balance / solanaWeb3.LAMPORTS_PER_SOL;
 
-                // Refresh Price
-                refreshPriceBtn.addEventListener('click', fetchSolPrice);
+                            // Tampilkan saldo dalam SOL
+                            walletBalanceDisplay.textContent = `${currentBalance.toFixed(
+                                4
+                            )} SOL`;
+
+                            // Hitung dan tampilkan saldo dalam USD
+                            const balanceUSD = currentBalance * solPrice;
+                            walletBalanceUSD.textContent = `$${balanceUSD.toFixed(
+                                2
+                            )} USD`;
+
+                            return;
+                        } catch (error) {
+                            console.error(
+                                `Failed with endpoint ${endpoint}:`,
+                                error
+                            );
+                        }
+                    }
+                    walletBalanceDisplay.textContent = 'Error';
+                    walletBalanceUSD.textContent = 'Error';
+                }
+
+                // Initial calls
+                fetchSolPrice();
+                fetchWalletBalance();
 
                 // Fee Selection
                 feeButtons.forEach((button) => {
                     button.addEventListener('click', () => {
-                        feeButtons.forEach((btn) =>
-                            btn.classList.remove('ring-2', 'ring-white')
+                        // Hapus styling dari semua tombol
+                        feeButtons.forEach((btn) => {
+                            btn.classList.remove(
+                                'ring-4',
+                                'ring-white',
+                                'opacity-100'
+                            );
+                            btn.classList.add('opacity-50');
+                        });
+
+                        // Tambahkan styling ke tombol yang dipilih
+                        button.classList.remove('opacity-50');
+                        button.classList.add(
+                            'ring-4',
+                            'ring-white',
+                            'opacity-100',
+                            'scale-105'
                         );
-                        button.classList.add('ring-2', 'ring-white');
-                        selectedFee = parseFloat(button.dataset.fee);
+
+                        // Ambil nilai fee yang dipilih
+                        const selectedFee = parseFloat(button.dataset.fee);
+
+                        // Periksa apakah checkbox x2 Fee aktif
+                        const feeMultiplier = feeMultiplierCheckbox.checked
+                            ? 2
+                            : 1;
+
+                        // Hitung total fee
+                        const totalFee = selectedFee * feeMultiplier;
+
+                        // Hitung sisa saldo
+                        const remainingBalance = currentBalance - totalFee;
+
+                        // Tampilkan sisa saldo dalam SOL
+                        remainingBalanceSpan.textContent =
+                            remainingBalance.toFixed(4);
+
+                        // Hitung dan tampilkan sisa saldo dalam USD
+                        const remainingBalanceUSDValue =
+                            remainingBalance * solPrice;
+                        remainingBalanceUSD.textContent = `$${remainingBalanceUSDValue.toFixed(
+                            2
+                        )}`;
+
+                        // Hitung dan tampilkan sisa saldo dalam IDR (1 USD = 15.000 IDR)
+                        const remainingBalanceIDRValue =
+                            remainingBalanceUSDValue * 15000;
+                        remainingBalanceIDR.textContent = `Rp ${remainingBalanceIDRValue.toLocaleString()}`;
+
+                        // Tampilkan hasil
+                        resultDiv.classList.remove('hidden');
                     });
                 });
 
-                // Calculate Remaining Balance
-                calculateBtn.addEventListener('click', () => {
-                    const balanceType = document.querySelector(
-                        'input[name="balanceType"]:checked'
-                    ).value;
-                    const balance = parseFloat(balanceInput.value);
-
-                    if (isNaN(balance) || selectedFee === 0) {
-                        alert('Please enter balance and select a fee');
-                        return;
+                // Tambahkan event listener untuk checkbox x2 Fee
+                feeMultiplierCheckbox.addEventListener('change', () => {
+                    // Ketika checkbox diubah, hitung ulang sisa saldo
+                    const selectedButton =
+                        document.querySelector('.fee-btn.ring-4');
+                    if (selectedButton) {
+                        selectedButton.click(); // Trigger click event pada tombol yang dipilih
                     }
-
-                    let balanceInSol =
-                        balanceType === 'usd' ? balance / solPrice : balance;
-
-                    const feeMultiplier = feeMultiplierCheckbox.checked ? 2 : 1;
-                    const totalFee = selectedFee * feeMultiplier;
-                    const remainingBalance = balanceInSol - totalFee;
-                    remainingBalanceSpan.textContent =
-                        remainingBalance.toFixed(4);
-                    resultDiv.classList.remove('hidden');
                 });
             });
         </script>
