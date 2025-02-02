@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hubungi Admin</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            }
+
+            @keyframes backgroundAnimation {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-15px);
+                }
+            }
+
+            @keyframes wobble {
+                0%,
+                100% {
+                    transform: rotate(0deg);
+                }
+                25% {
+                    transform: rotate(-5deg);
+                }
+                75% {
+                    transform: rotate(5deg);
+                }
+            }
+
+            body {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(
+                    -45deg,
+                    #ffb5e8,
+                    #aff8db,
+                    #ffc9de,
+                    #b28dff
+                );
+                background-size: 400% 400%;
+                animation: backgroundAnimation 15s ease infinite;
+                padding: 1rem;
+            }
+
+            .container {
+                background: white;
+                border-radius: 30px;
+                padding: 2rem;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                max-width: 400px;
+                width: 90%;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .container::before {
+                content: '✨';
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-size: 24px;
+                animation: bounce 2s infinite;
+            }
+
+            .container::after {
+                content: '✨';
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                font-size: 24px;
+                animation: bounce 2s infinite;
+                animation-delay: 1s;
+            }
+
+            h1 {
+                color: #ff69b4;
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+                animation: wobble 3s ease-in-out infinite;
+            }
+
+            .cute-character {
+                font-size: 4rem;
+                margin: 1rem 0;
+                display: inline-block;
+                animation: bounce 2s ease infinite;
+            }
+
+            .qr-wrapper {
+                background: #fff0f5;
+                padding: 1rem;
+                border-radius: 20px;
+                margin: 1rem auto;
+                max-width: 280px;
+                border: 3px dashed #ffb5e8;
+                transition: transform 0.3s ease;
+            }
+
+            .qr-wrapper:hover {
+                transform: scale(1.05);
+            }
+
+            .qr-code {
+                width: 100%;
+                height: auto;
+                border-radius: 12px;
+            }
+
+            .instruction {
+                color: #666;
+                font-size: 1.1rem;
+                line-height: 1.5;
+                margin: 1rem 0;
+            }
+
+            .telegram-id {
+                color: #8a2be2;
+                font-size: 1.4rem;
+                font-weight: bold;
+                padding: 0.5rem 1rem;
+                background: #f0e6ff;
+                border-radius: 20px;
+                display: inline-block;
+                margin-top: 1rem;
+                animation: wobble 4s ease-in-out infinite;
+            }
+
+            .hearts {
+                position: absolute;
+                font-size: 1.5rem;
+            }
+
+            .heart1 {
+                top: 20px;
+                right: 20px;
+                animation: bounce 3s infinite 0.5s;
+            }
+            .heart2 {
+                bottom: 20px;
+                left: 20px;
+                animation: bounce 3s infinite 1s;
+            }
+
+            @media (max-width: 480px) {
+                .container {
+                    padding: 1.5rem;
+                }
+
+                h1 {
+                    font-size: 1.5rem;
+                }
+
+                .cute-character {
+                    font-size: 3rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <span class="hearts heart1">🐳</span>
+            <span class="hearts heart2">🤑</span>
+
+            <h1>Website Telah Pindah</h1>
+
+            <div class="cute-character">💸</div>
+
+            <p class="instruction">
+                Scan QR code untuk menghubungi Created ya~
+            </p>
+
+            <div class="qr-wrapper">
+                <img src="qr.png" alt="QR Code Telegram" class="qr-code" />
+            </div>
+
+            <div class="telegram-id">@ARD1998</div>
+        </div>
+    </body>
+</html>
